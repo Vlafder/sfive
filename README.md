@@ -3,7 +3,7 @@
 
 
 # установка
-	В терминале выполнить:
+В терминале выполнить:
 
 	cd ~
 	git clone https://github.com/Vlafder/sfive.git
