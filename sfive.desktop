@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=Application
+Terminal=true
+Name=sFive
+Exec=/home/portpot/sfive/startup.sh
+Comment='semester five common gui'
+Icon=/home/portpot/sfive/icons/icon.png
+Name[en]=sFive
