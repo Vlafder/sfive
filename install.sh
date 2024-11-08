@@ -9,8 +9,7 @@ sudo apt install python3-venv
 sudo apt install python3-pyqt5
 sudo gpasswd --add ${USER} dialout
 
-sudo apt-get install qttools5-dev-tools
-sudo apt-get install qttools5-dev
+sudo apt install pyqt5-dev-tools
 
 
 python3 -m venv .venv
@@ -26,6 +25,7 @@ pip install pyqtgraph
 pip install control
 pip install QtAwesome
 pip install pyserial
+pip install pyqtgraph
  
 
 
@@ -40,7 +40,7 @@ echo -e "[Desktop Entry]" >> $FILE
 echo -e "Version=1.0" >> $FILE
 echo -e "Encoding=UTF-8" >> $FILE
 echo -e "Type=Application" >> $FILE
-echo -e "Terminal=true" >> $FILE
+echo -e "Terminal=false" >> $FILE
 echo -e "Name=sFive" >> $FILE
 echo -e "Exec=$DIR/startup.sh" >> $FILE
 echo -e "Comment='semester five common gui'" >> $FILE

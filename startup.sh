@@ -1,5 +1,5 @@
 #!/bin/bash -i
 
-neofetch
+DIR="$( cd "$( dirname "$0" )" && pwd )"
 
-read 
+$DIR/.venv/bin/python $DIR/main.py

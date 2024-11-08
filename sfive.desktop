@@ -2,9 +2,9 @@
 Version=1.0
 Encoding=UTF-8
 Type=Application
-Terminal=true
+Terminal=false
 Name=sFive
-Exec=/home/portpot/sfive/startup.sh
+Exec=/home/hotpot/sfive/startup.sh
 Comment='semester five common gui'
-Icon=/home/portpot/sfive/icons/icon.png
+Icon=/home/hotpot/sfive/icons/icon.png
 Name[en]=sFive
