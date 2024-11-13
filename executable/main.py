@@ -1,21 +1,19 @@
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
-from PyQt5 import QtGui
-
 from random import randint
-
 from math import sin
-
 import pyqtgraph as pg
-from PyQt5 import QtCore
+
+from base_gui import Ui_MainWindow
+from PyQt5 import QtWidgets
 
 import sys
 import os
 
 
-class MainWindow(QMainWindow):
+
+
+class MainLayout(Ui_MainWindow):
 	def __init__(self):
-		super(MainWindow, self).__init__()
+		super(Ui_MainWindow, self).__init__()
 
 		self.setWindowTitle("sFive")
 		self.setGeometry(0, 0, 500, 500)
@@ -30,9 +28,11 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-	app = QApplication(sys.argv)
+	app = QtWidgets.QApplication(sys.argv)
+	MainWindow = QtWidgets.QMainWindow()
 
-	window = MainWindow()
-	window.show()
-	
-	app.exec()
+	ui = MainLayout()
+	ui.setupUi(MainWindow)
+
+	MainWindow.show()
+	sys.exit(app.exec_())

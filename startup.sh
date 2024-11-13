@@ -2,4 +2,4 @@
 
 DIR="$( cd "$( dirname "$0" )" && pwd )"
 
-$DIR/.venv/bin/python $DIR/main.py
+$DIR/.venv/bin/python $DIR/executable/main.py
