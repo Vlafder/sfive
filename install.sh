@@ -12,20 +12,22 @@ sudo gpasswd --add ${USER} dialout
 sudo apt install pyqt5-dev-tools
 
 
+#create virtual inviorment
 python3 -m venv .venv
-source .venv/bin/activate
 
-
-pip install numpy
-pip install matplotlib
-pip install pyqt5
-pip install pyqt5-tools
-pip install pyyaml
-pip install pyqtgraph
-pip install control
-pip install QtAwesome
-pip install pyserial
-pip install pyqtgraph
+#enter virtual inviorment
+source .venv/bin/activate 
+    pip install numpy
+    pip install matplotlib
+    pip install pyqt5
+    pip install pyqt5-tools
+    pip install pyyaml
+    pip install pyqtgraph
+    pip install control
+    pip install QtAwesome
+    pip install pyserial
+    pip install pyqtgraph
+    pip install xlwt
  
 
 
