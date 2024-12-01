@@ -2,8 +2,8 @@
 
 DIR="$( cd "$( dirname "$0" )" && pwd )"
 
-sudo apt update
-sudo apt -y upgrade
+#sudo apt update
+#sudo apt -y upgrade
 
 sudo apt install python3-venv
 sudo apt install python3-pyqt5
@@ -46,9 +46,10 @@ echo -e "Terminal=false" >> $FILE
 echo -e "Name=sFive" >> $FILE
 echo -e "Exec=$DIR/startup.sh" >> $FILE
 echo -e "Comment='semester five common gui'" >> $FILE
-echo -e "Icon=$DIR/icons/icon.png" >> $FILE
+echo -e "Icon=$DIR/icons/sfive.png" >> $FILE
 echo -e "Name[en]=sFive" >> $FILE
 
 sudo chmod +x sfive.desktop
 cp $FILE ~/Desktop/
 sudo cp $FILE /usr/share/applications
+rm "$FILE"
