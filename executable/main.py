@@ -1,5 +1,6 @@
 import sys
 import os
+import atexit
 
 from PyQt5  \
 	import  uic	#for ui parsing
@@ -42,6 +43,16 @@ from math \
 
 from random import randint
 
+from device import Device
+
+
+#signal type macros
+signal_num = {
+    "triangular" : 0,
+    "sine"       : 1,
+    "sawlike"    : 2,
+    "square"     : 3
+}
 
 
 
@@ -59,7 +70,6 @@ class UI(QMainWindow):
 		self.amplitude  = 0      # mm
 		self.origin     = 75     # mm
 		self.signal     = "sine" # (triangular, sine, sawlike, square)
-		self.exchange   = True	 # exchange data?
 
 		#sfive base dir
 		self.base_dir   = os.path.dirname(__file__) + "/../"
@@ -78,7 +88,13 @@ class UI(QMainWindow):
 		self.timer = QTimer()
 
 
+		#Connect the model
+		self.device = Device(port='/dev/ttyACM0', baudrate=500000)
 
+		try:
+			self.device.connect()
+		except:
+			print("Device connection error")
 
 		#getting ui ready
 		self.initUI()
@@ -94,6 +110,8 @@ class UI(QMainWindow):
 
 
 		self.show()
+
+		atexit.register(self.device.disconnect())
 
 
 
@@ -178,10 +196,12 @@ class UI(QMainWindow):
 	#start data exchange
 	def start(self):
 		self.exchange = True
+		self.device.start()
 
 	#stop data exchange
 	def stop(self):
 		self.exchange = False
+		self.device.stop()
 
 	#delete aqquaried data
 	def drop(self):
@@ -195,6 +215,9 @@ class UI(QMainWindow):
 		self.data["real"].append(self.origin)
 
 		#дописать отчитку графика
+
+		#drop data on device
+		self.device.drop()
 
 	#export to excel
 	def export(self):
@@ -242,6 +265,9 @@ class UI(QMainWindow):
 		self.ui_elements["ori_lbl"].setText(str(self.origin))
 		self.ui_elements["sig_lbl"].setText(locale[self.signal])
 
+		#send new params to device
+		self.device.set(signal_num[self.signal], self.frequancy, self.amplitude, self.origin)
+
 	def set_updaters(self):
 		self.timer.setInterval(self.sample_duration)
 		self.timer.timeout.connect(self.update_plot)
@@ -249,20 +275,15 @@ class UI(QMainWindow):
 
 	def update_plot(self):
 		if(self.exchange):
-			self.data["time"].append(self.data["time"][-1] + self.sample_duration)
-			self.data["idle"].append(self.get_idle(self.data["time"][-1]))
-			self.data["real"].append(self.get_real(self.data["time"][-1]))
+			#get data from device [time, idle_val(-s), real_val(-s)]
+			raw_data = self.device.get()
+
+			self.data["time"].append(raw_data[0])
+			self.data["idle"].append(raw_data[1])
+			self.data["real"].append(raw_data[2])
 
 			self.real.setData( self.data["time"][-self.max_samples:], self.data["real"][-self.max_samples:])
 			self.idle.setData( self.data["time"][-self.max_samples:], self.data["idle"][-self.max_samples:])
-			
-	def get_idle(self, time):
-		#return sin(time)*self.amplitude + self.origin
-		return randint(-50, 50) + self.origin
-
-	def get_real(self, time):
-		return sin(time)*self.amplitude + self.origin
-		#return randint(-50, 50) + self.origin
 
 
 

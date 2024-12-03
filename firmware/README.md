@@ -15,14 +15,14 @@
 
         1) Передача параметров настройки и начало их выполнения
             Request:
-                text: "<command><form><freq><amp><origin>"
+                text: "<command><signal><freq><amp><origin>"
                     //Без пробелов, чтобы парсить было проще (request[i])
 
                 Поле     : макрос       = значение  | тип
                 ------------------------------------------
                 command  : SET          = 0         | char
                 ------------------------------------------
-                form     : TRIANGULAR   = 0         | unsigned char
+                signal   : TRIANGULAR   = 0         | unsigned char
                          : SINE         = 1         |
                          : SAWLIKE      = 2         |
                          : SQUARE       = 3         |  
