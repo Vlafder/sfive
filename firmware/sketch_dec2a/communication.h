@@ -2,8 +2,8 @@
 
 //User defined callbacks
 void parse_params(String);
-String get_idle_pos(void);
-String get_real_pos(void);
+String get_idle_val(void);
+String get_real_val(void);
 
 
 
@@ -62,7 +62,7 @@ void handle_request()
 				data_time   = 0;
 				break;
 			case GET:
-				answer = String(data_time) + " " + get_idle_pos() + " " + get_real_pos();
+				answer = String(data_time) + " " + get_idle_val() + " " + get_real_val();
     			Serial.println(answer);
 				break;
 		}

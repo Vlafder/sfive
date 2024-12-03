@@ -34,11 +34,11 @@ void loop(){}
 
 void parse_params(String new_params)
 {
-	//request[0] is <command> type
-	params.form   = request[1];
-	params.freq   = request[2];
-	params.amp    = to_uchar(request, 3, 3); //String, indent, length in bytes
-	params.origin = to_uchar(request, 6, 3);
+	//new_params[0] is <command> type
+	params.signal = new_params[1];
+	params.freq   = new_params[2];
+	params.amp    = to_uchar(new_params, 3, 3); //String, indent, length in bytes
+	params.origin = to_uchar(new_params, 6, 3);
 }
 
 String get_idle_val()

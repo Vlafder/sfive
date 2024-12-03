@@ -55,6 +55,11 @@ signal_num = {
 }
 
 
+# ports = serial.tools.list_ports.comports()
+
+# for port, desc, hwid in sorted(ports):
+#     print(f"{port}: {desc} [{hwid}]")
+
 
 class UI(QMainWindow):
 	def __init__(self):
@@ -81,8 +86,9 @@ class UI(QMainWindow):
 			"real"  : [self.origin]		# mm
 		}    
 		self.plot_graph  = PlotWidget()
-		self.max_samples = 50          # int
+		self.max_samples = 50           # int
 		self.sample_duration = 100  	# millisec
+		self.exchange = True
 
 		#Main update timer
 		self.timer = QTimer()
@@ -102,17 +108,11 @@ class UI(QMainWindow):
 		#set plot
 		self.initPlot()
 
-		#coonecting to the physical model
-		#self.connect_with_apparatus()
-
 		#setting update timers
 		self.set_updaters()
 
 
 		self.show()
-
-		atexit.register(self.device.disconnect())
-
 
 
 	#setting up GUI
@@ -278,7 +278,8 @@ class UI(QMainWindow):
 			#get data from device [time, idle_val(-s), real_val(-s)]
 			raw_data = self.device.get()
 
-			self.data["time"].append(raw_data[0])
+			self.data["time"].append(self.data["time"][-1] + 100)
+			#self.data["time"].append(raw_data[0])
 			self.data["idle"].append(raw_data[1])
 			self.data["real"].append(raw_data[2])
 
