@@ -24,10 +24,9 @@ class Device():
     def set(self, *args):
         #get signal number by name
         signal = args[0]
-        del args[0]
 
         #turn [3, 1, 2] -> "003001002"
-        params = ''.join([to_len_3(param) for param in args]) + "\n"
+        params = ''.join([to_len_3(param) for param in args[1:]]) + "\n"
         msg = (f"{SET}{signal}{params}").encode('ASCII')
 
 
@@ -60,10 +59,11 @@ class Device():
 
 
 def to_len_3(param):
-    result = "000"
-    param  = string(param)
-    for i in range(len(param)):
-        result[i] = param[i]
+    result = ["0", "0", "0"]
+
+    for i in range(3):
+        result[i] = str(param % 10);
+        param //= 10
 
     #reverse a string
-    return result[::-1]
+    return ''.join(result[::-1])
