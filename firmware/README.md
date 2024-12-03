@@ -45,7 +45,7 @@
 
                 Поле     : макрос       = значение  | тип
                 ------------------------------------------
-                command  : START       = 1          | char
+                command  : START        = 1          | char
 
                 Example: "1" == <START>
 
@@ -59,7 +59,7 @@
 
                 Поле     : макрос       = значение  | тип
                 ------------------------------------------
-                command  : STOP        = 2          | char
+                command  : STOP         = 2          | char
 
             Answer:
                 Без ответа
@@ -71,7 +71,7 @@
 
                 Поле     : макрос       = значение  | тип
                 ------------------------------------------
-                command  : DROP        = 3          | char
+                command  : DROP         = 3          | char
 
             Answer:
                 Без ответа
@@ -83,7 +83,7 @@
 
                 Поле     : макрос       = значение  | тип
                 ------------------------------------------
-                command  : Start       = 4          | char
+                command  : Start        = 4          | char
 
             Answer: 
                 text: "<time> <idle_pos> <real_pos>" 
