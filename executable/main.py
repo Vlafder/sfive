@@ -71,7 +71,7 @@ class UI(QMainWindow):
 			"real"  : [self.origin]		# mm
 		}    
 		self.plot_graph  = PlotWidget()
-		self.max_samples = 200          # int
+		self.max_samples = 50          # int
 		self.sample_duration = 100  	# millisec
 
 		#Main update timer
