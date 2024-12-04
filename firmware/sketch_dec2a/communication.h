@@ -18,6 +18,8 @@ String get_real_val(void);
 
 String answer, request;
 
+#define CHAR_TO_INT(x) (x-'0')
+
 
 //Request handle timer
 HardwareTimer *timer_handle_request = new HardwareTimer(TIM3);
@@ -31,7 +33,7 @@ void initCom()
 {
 	//Initialise serial commincation interface
 	Serial.begin(500000);
-	delay(1000);
+	delay(100);
 
 	//Set timer interrupts and asign functions executed on interrupt
 	timer_handle_request->pause();
@@ -47,7 +49,7 @@ void handle_request()
 	{
 		request = Serial.readStringUntil('\n');
 
-		switch (request[0]) 
+		switch (CHAR_TO_INT(request[0])) 
 		{
 			case SET:
 				parse_params(request);
@@ -63,9 +65,10 @@ void handle_request()
 				break;
 			case GET:
 				answer = String(data_time) + " " + get_idle_val() + " " + get_real_val();
-    			Serial.println(answer);
+    		Serial.println(answer);
 				break;
 		}
+    Serial.flush();
 	}
 	else 
 	{

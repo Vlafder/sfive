@@ -16,46 +16,50 @@ class Device():
             self.sp = serial.Serial(port=port, baudrate=baudrate) 
         except serial.SerialException as se:
             print("Serial port error:", str(se))
+            exit()
         except Exception as e:
             print("An error occurred:", str(e))
+            exit()
 
-        #atexit.register(self.sp.close())
+        atexit.register(self.sp.close)
     
     def set(self, *args):
         #get signal number by name
         signal = args[0]
 
         #turn [3, 1, 2] -> "003001002"
-        params = ''.join([to_len_3(param) for param in args[1:]]) + "\n"
-        msg = (f"{SET}{signal}{params}").encode('ASCII')
+        params = ''.join([to_len_3(param) for param in args[1:]])
 
-
-        #self.sp.write(b"{msg}")
-        print(msg)
+        self.sp.write(self.msg(f"{SET}{signal}{params}"))
+        print(self.msg(f"{SET}{signal}{params}"))
 
     def start(self):
-        #self.sp.write(f"{START}")
+        self.sp.write(self.msg(f"{START}"))
         print(f"{START}")
 
     def stop(self):
-        #self.sp.write(f"{STOP}")
+        self.sp.write(self.msg(f"{STOP}"))
         print(f"{STOP}")
 
     def drop(self):
-        #self.sp.write(f"{DROP}")
+        self.sp.write(self.msg(f"{DROP}"))
         print(f"{DROP}")
 
     def get(self):
-        #self.sp.write(f"{GET}")
-        #c = self.sp.read(1)
-        raw_data = ""
+        self.sp.write(self.msg(f"{GET}"))
+        raw_data = self.sp.readline().decode().strip()
+        
+        result = raw_data.split(" ")
 
-        #while c!="\n" and c!="\0":
-        #    raw_data += c
-        #    #c = self.sp.read(1)
+        if(len(result)==3):
+            print(result)
+            return [int(i) for i in result]
+        else:
+            print("GET error")
+            return [0, 75, 75]
 
-        #print( raw_data.split("") )
-        return 100, 75, 75
+    def msg(self, text):
+        return bytes(text + "\n", 'utf-8')
 
 
 def to_len_3(param):

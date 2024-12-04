@@ -87,7 +87,7 @@ class UI(QMainWindow):
 		}    
 		self.plot_graph  = PlotWidget()
 		self.max_samples = 50           # int
-		self.sample_duration = 100  	# millisec
+		self.sample_duration = 50  	    # millisec
 		self.exchange = True
 
 		#Main update timer
@@ -96,11 +96,6 @@ class UI(QMainWindow):
 
 		#Connect the model
 		self.device = Device(port='/dev/ttyACM0', baudrate=500000)
-
-		try:
-			self.device.connect()
-		except:
-			print("Device connection error")
 
 		#getting ui ready
 		self.initUI()
@@ -215,6 +210,8 @@ class UI(QMainWindow):
 		self.data["real"].append(self.origin)
 
 		#дописать отчитку графика
+		self.idle.setData( self.data["time"], self.data["idle"])
+		self.real.setData( self.data["time"], self.data["real"])
 
 		#drop data on device
 		self.device.drop()
@@ -278,13 +275,16 @@ class UI(QMainWindow):
 			#get data from device [time, idle_val(-s), real_val(-s)]
 			raw_data = self.device.get()
 
-			self.data["time"].append(self.data["time"][-1] + 100)
-			#self.data["time"].append(raw_data[0])
+			
+			self.data["time"].append(raw_data[0])
 			self.data["idle"].append(raw_data[1])
 			self.data["real"].append(raw_data[2])
 
-			self.real.setData( self.data["time"][-self.max_samples:], self.data["real"][-self.max_samples:])
+			#print(self.data["time"][-self.max_samples:], self.data["real"][-self.max_samples:])
+
 			self.idle.setData( self.data["time"][-self.max_samples:], self.data["idle"][-self.max_samples:])
+			self.real.setData( self.data["time"][-self.max_samples:], self.data["real"][-self.max_samples:])
+			
 
 
 
