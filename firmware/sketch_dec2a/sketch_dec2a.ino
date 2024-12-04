@@ -44,7 +44,7 @@ String get_idle_val()
 {
 	//Return string aca "<idle_val_1> <idle_val_2> <...> <idle_val_last>"
   //radian = (1/2*PI)*FREQUANCY*TIME_IN_MILLIS*1000
-  double radian = (1.f/(2*M_PI)*params.freq*data_time);
+  double radian = (1.f/(2*M_PI)*params.freq*data_time/10);
   int idle_pos = sin(radian)*params.amp + params.origin;
 	return String(idle_pos);
 }
@@ -52,7 +52,7 @@ String get_idle_val()
 String get_real_val()
 {
 	//Return string aca "<real_val_1> <real_val_2> <...> <real_val_last>"
-  double radian = (1.f/(2*M_PI)*params.freq*data_time);
+  double radian = (1.f/(2*M_PI)*params.freq*data_time/10);
   int real_pos = sin(radian)*params.amp + params.origin + 20;
 	return String(real_pos);
 }
