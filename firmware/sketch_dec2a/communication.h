@@ -37,7 +37,7 @@ void initCom()
 
 	//Set timer interrupts and asign functions executed on interrupt
 	timer_handle_request->pause();
-	timer_handle_request->setOverflow(10000, MICROSEC_FORMAT); //every 10 milliseconds
+	timer_handle_request->setOverflow(1000, MICROSEC_FORMAT); //every 10 milliseconds
 	timer_handle_request->attachInterrupt(handle_request);
 	timer_handle_request->refresh();
 	timer_handle_request->resume();
@@ -73,6 +73,14 @@ void handle_request()
 	else 
 	{
 		if(data_status)
-			data_time += 10;
+			data_time += 1;
 	}
+}
+
+u_int to_uint(String val, int indent, int size)
+{
+	u_int sum = 0;
+	for(int i=0; i<size; ++i)
+		sum = sum*10 + CHAR_TO_INT(val[i+indent]);
+	return sum;
 }

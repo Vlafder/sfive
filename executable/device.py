@@ -31,19 +31,19 @@ class Device():
         params = ''.join([to_len_3(param) for param in args[1:]])
 
         self.sp.write(self.msg(f"{SET}{signal}{params}"))
-        print(self.msg(f"{SET}{signal}{params}"))
+        #print(self.msg(f"{SET}{signal}{params}"))
 
     def start(self):
         self.sp.write(self.msg(f"{START}"))
-        print(f"{START}")
+        #print(f"{START}")
 
     def stop(self):
         self.sp.write(self.msg(f"{STOP}"))
-        print(f"{STOP}")
+        #print(f"{STOP}")
 
     def drop(self):
         self.sp.write(self.msg(f"{DROP}"))
-        print(f"{DROP}")
+        #print(f"{DROP}")
 
     def get(self):
         self.sp.write(self.msg(f"{GET}"))
@@ -52,7 +52,6 @@ class Device():
         result = raw_data.split(" ")
 
         if(len(result)==3):
-            print(result)
             return [int(i) for i in result]
         else:
             print("GET error")

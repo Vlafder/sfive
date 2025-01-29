@@ -86,8 +86,7 @@ class UI(QMainWindow):
 			"real"  : [self.origin]		# mm
 		}    
 		self.plot_graph  = PlotWidget()
-		self.max_samples = 50           # int
-		self.sample_duration = 20  	# millisec
+		self.sample_duration = 1 		# millisec
 		self.exchange = True
 
 		#Main update timer
@@ -275,15 +274,14 @@ class UI(QMainWindow):
 			#get data from device [time, idle_val(-s), real_val(-s)]
 			raw_data = self.device.get()
 
-			
 			self.data["time"].append(raw_data[0])
 			self.data["idle"].append(raw_data[1])
 			self.data["real"].append(raw_data[2])
 
-			#print(self.data["time"][-self.max_samples:], self.data["real"][-self.max_samples:])
+			sample_count = int(1000/self.sample_duration)
 
-			self.idle.setData( self.data["time"][-self.max_samples:], self.data["idle"][-self.max_samples:])
-			self.real.setData( self.data["time"][-self.max_samples:], self.data["real"][-self.max_samples:])
+			self.idle.setData( self.data["time"][-sample_count:], self.data["idle"][-sample_count:])
+			self.real.setData( self.data["time"][-sample_count:], self.data["real"][-sample_count:])
 			
 
 
