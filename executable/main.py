@@ -41,6 +41,8 @@ from pyqtgraph          \
 from math \
 	import  sin
 
+import platform
+
 from random import randint
 
 from device import Device
@@ -192,10 +194,17 @@ class UI(QMainWindow):
 					 )
 
 	def detectDevice(self):
-		device = Device();
-		info = device.getModelInfo()
+		device = Device()
+		
+		match platform.system():
+			case 'Linux': 
+				device = Device(port='/dev/ttyACM0', baudrate=500000)
+			case 'Darwin': 
+				device = Device()
+			case 'Windows': 
+				device = Device()
 
-		print(">>>", info["status"])
+		info = device.getModelInfo()
 
 		self.ui_elements["port"].setText(info["port"])
 		self.ui_elements["status"].setText(info["status"])
