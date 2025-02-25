@@ -27,7 +27,7 @@ class Device():
             return
 
         try:
-            self.sp = serial.Serial(port=port, baudrate=baudrate) 
+            self.sp = serial.Serial(port=port, baudrate=baudrate, timeout=0.5) 
             self.getInfo()
 
         except serial.SerialException as se:
