@@ -12,7 +12,7 @@ INFO  = 5
 
 
 class Device():
-    def __init__(self, port='', baudrate=0, timeout=0.5):
+    def __init__(self, port='', baudrate=0):
         self.sp = False
         self.info = {
             "port"   : port,
@@ -27,15 +27,19 @@ class Device():
             return
 
         try:
-            self.sp = serial.Serial(port=port, baudrate=baudrate, timeout=0.5) 
+            self.sp = serial.Serial(port=port, baudrate=baudrate, timeout=0) 
             self.getInfo()
 
         except serial.SerialException as se:
+            if self.sp:
+                self.sp.close
             self.sp = False
             self.info["status"] = f"Ошибка: {str(se)}"
             return
 
         except Exception as e:
+            if self.sp.is_open:
+                self.sp.close
             self.sp = False
             self.info["status"] = f"Ошибка: {str(e)}"
             return
