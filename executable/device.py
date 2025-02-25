@@ -12,7 +12,7 @@ INFO  = 5
 
 
 class Device():
-    def __init__(self, port='', baudrate=0):
+    def __init__(self, port='', baudrate=0, timeout=0.5):
         self.sp = False
         self.info = {
             "port"   : port,
