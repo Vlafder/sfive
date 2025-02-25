@@ -1,5 +1,4 @@
 #include <VBCoreG4_arduino_system.h>
-
 #include "communication.h"
 
 #define sgn(x) ((x) < 0 ? -1 : ((x) > 0 ? 1 : 0))
