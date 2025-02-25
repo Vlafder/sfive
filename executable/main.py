@@ -71,7 +71,7 @@ class UI(QMainWindow):
 		self.max_time_span = 1000  #millisec
 		
 		#init default params
-		self.frequancy  = 0      # 0.1Hz
+		self.frequency  = 0      # 0.1Hz
 		self.amplitude  = 0      # mm
 		self.origin     = 75     # mm
 		self.signal     = "sine" # (triangular, sine, sawlike, square)
@@ -92,12 +92,11 @@ class UI(QMainWindow):
 		#Main update timer
 		self.timer = QTimer()
 
-
-		#Connect the model
-		self.device = Device(port='/dev/ttyACM0', baudrate=500000)
-
 		#getting ui ready
 		self.initUI()
+
+		#Connect the model
+		self.device = self.detectDevice()
 
 		#set plot
 		self.initPlot()
@@ -125,7 +124,7 @@ class UI(QMainWindow):
 			"drop"			: self.findChild(QPushButton, 	"drop_btn"),
 			"apply_params"	: self.findChild(QPushButton, 	"apply_params_btn"),
 			"export"		: self.findChild(QPushButton, 	"export_btn"),
-			"frequancy"		: self.findChild(QLineEdit,   	"freq_input"),
+			"frequency"		: self.findChild(QLineEdit,   	"freq_input"),
 			"amplitude"		: self.findChild(QLineEdit,   	"amp_input"),
 			"origin"		: self.findChild(QLineEdit,   	"null_point_input"),
 			"signal"		: self.findChild(QButtonGroup,  "buttonGroup"),
@@ -137,19 +136,23 @@ class UI(QMainWindow):
 			"amp_lbl"		: self.findChild(QLabel, 	  	"amp_val_lbl"),
 			"ori_lbl"		: self.findChild(QLabel, 	  	"null_pnt_lbl"),
 			"sig_lbl"		: self.findChild(QLabel, 	  	"sig_form_lbl"),
+			"port"			: self.findChild(QLabel, 	  	"port_lbl"),
+			"status"		: self.findChild(QLabel, 	  	"status_lbl"),
+			"model"			: self.findChild(QLabel, 	  	"model_lbl"),
+			"prak"			: self.findChild(QLabel, 	  	"prak_lbl"),
+			"about"			: self.findChild(QLabel, 	  	"about_lbl"),
+			"author"		: self.findChild(QLabel, 	  	"author_lbl"),
+			"detect"		: self.findChild(QPushButton, 	"detect_btn"),
 		}
 
 		#enforce input constrains
-		self.ui_elements["frequancy"].setValidator(QIntValidator(0, self.max_freq))
+		self.ui_elements["frequency"].setValidator(QIntValidator(0, self.max_freq))
 		self.ui_elements["amplitude"].setValidator(QIntValidator(0, self.max_height))
 		self.ui_elements["origin"].setValidator(QIntValidator(0, self.max_height))
 
 		#apply images
 		self.findChild(QLabel, "sfive_logo").setPixmap(QPixmap(self.base_dir + "icons/sfive.png"))
 		self.findChild(QLabel, "signal_forms_img").setPixmap(QPixmap(self.base_dir + "icons/signals.png"))
-
-		#bind buttons
-		self.ui_elements["apply_params"]
 
 		#define startup tab
 		self.findChild(QTabWidget, "tabWidget").setCurrentWidget(self.findChild(QWidget, "about"))
@@ -160,6 +163,7 @@ class UI(QMainWindow):
 		self.ui_elements["drop"].clicked.connect(self.drop)
 		self.ui_elements["export"].clicked.connect(self.export)
 		self.ui_elements["apply_params"].clicked.connect(self.apply_params)
+		self.ui_elements["detect"].clicked.connect(self.detectDevice)
 
 		#set today date
 		self.ui_elements["date"].setDate(QDate.currentDate())
@@ -186,6 +190,21 @@ class UI(QMainWindow):
 						name="Фактическое положение",
 						pen=mkPen(color=(0, 0, 255)),
 					 )
+
+	def detectDevice(self):
+		device = Device();
+		info = device.getModelInfo()
+
+		print(">>>", info["status"])
+
+		self.ui_elements["port"].setText(info["port"])
+		self.ui_elements["status"].setText(info["status"])
+		self.ui_elements["model"].setText(info["model"])
+		self.ui_elements["prak"].setText(info["prak"])
+		self.ui_elements["about"].setText(info["about"])
+		self.ui_elements["author"].setText(info["author"])
+
+		return device
 		
 	#start data exchange
 	def start(self):
@@ -237,7 +256,7 @@ class UI(QMainWindow):
 	#applying parameters
 	def apply_params(self):
 		#getting raw parameters
-		frq = self.ui_elements["frequancy"].text()
+		frq = self.ui_elements["frequency"].text()
 		amp = self.ui_elements["amplitude"].text()
 		ori = self.ui_elements["origin"].text()
 		sig = self.ui_elements["signal"].checkedButton().objectName()
@@ -250,19 +269,19 @@ class UI(QMainWindow):
 		}
 		
 		#mapping and applying parameters
-		self.frequancy = int((0, frq)[ frq!="" ]) # = (frq == "") ? 0 : frq 
+		self.frequency = int((0, frq)[ frq!="" ]) # = (frq == "") ? 0 : frq 
 		self.amplitude = int((0, amp)[ amp!="" ])
 		self.origin    = int((0, ori)[ ori!="" ])
 		self.signal    = sig
 
 		#applying changes to export parameters
-		self.ui_elements["frq_lbl"].setText(str(self.frequancy))
+		self.ui_elements["frq_lbl"].setText(str(self.frequency))
 		self.ui_elements["amp_lbl"].setText(str(self.amplitude))
 		self.ui_elements["ori_lbl"].setText(str(self.origin))
 		self.ui_elements["sig_lbl"].setText(locale[self.signal])
 
 		#send new params to device
-		self.device.set(signal_num[self.signal], self.frequancy, self.amplitude, self.origin)
+		self.device.set(signal_num[self.signal], self.frequency, self.amplitude, self.origin)
 
 	def set_updaters(self):
 		self.timer.setInterval(self.sample_duration)

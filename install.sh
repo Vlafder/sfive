@@ -32,6 +32,12 @@ source .venv/bin/activate
 
 
 
+cd /etc/udev/rules.d
+sudo touch sfive.rules
+echo 'KERNEL=="ttyACM0", MODE="0666"' | sudo tee sfive.rules
+sudo chmod 666 /dev/ttyACM0
+
+
 FILE="sfive.desktop"
 
 if [ -f "$FILE" ] ; then
@@ -49,7 +55,7 @@ echo -e "Comment='semester five common gui'" >> $FILE
 echo -e "Icon=$DIR/icons/sfive.png" >> $FILE
 echo -e "Name[en]=sFive" >> $FILE
 
-sudo chmod +x sfive.desktop
-cp $FILE ~/Desktop/
+sudo chmod +x "sfive.desktop"
+cp $FILE ~/Desktop
 sudo cp $FILE /usr/share/applications
 rm "$FILE"
