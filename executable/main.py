@@ -194,6 +194,8 @@ class UI(QMainWindow):
 					 )
 
 	def detectDevice(self):
+		self.exchange = False
+
 		device = Device()
 		
 		match platform.system():
@@ -212,6 +214,8 @@ class UI(QMainWindow):
 		self.ui_elements["prak"].setText(info["prak"])
 		self.ui_elements["about"].setText(info["about"])
 		self.ui_elements["author"].setText(info["author"])
+
+		self.exchange = True
 
 		return device
 		
@@ -300,7 +304,17 @@ class UI(QMainWindow):
 	def update_plot(self):
 		if(self.exchange):
 			#get data from device [time, idle_val(-s), real_val(-s)]
-			raw_data = self.device.get()
+			try:
+				raw_data = self.device.get()
+			except Exception:
+				self.exchange = False
+				self.device = self.detectDevice()
+				return
+
+			if raw_data==[] :
+				self.exchange = False
+				self.ui_elements["status"] = "Ошибка передачи данных"
+				return
 
 			self.data["time"].append(raw_data[0])
 			self.data["idle"].append(raw_data[1])

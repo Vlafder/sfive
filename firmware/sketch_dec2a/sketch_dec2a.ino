@@ -10,6 +10,10 @@
 #define SAWLIKE    2
 #define SQUARE     3
 
+#define INFOMSG "Левитатор ECP-730|Магнитная левитация|www.github.com/vlafder/sfive|Чемякин В.C."
+
+String status = "Готово к работе";
+
 struct {
 	u_int signal;
 	u_int freq;
@@ -71,7 +75,10 @@ String get_real_val()
 	return get_idle_val();
 }
 
-
+String get_model_info(void)
+{
+  return status + "|" + String(INFOMSG);
+}
 
 
 

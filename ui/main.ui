@@ -21,7 +21,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="graph">
        <property name="contextMenuPolicy">
@@ -598,7 +598,7 @@ border-left: 0px;</string>
               </property>
               <property name="maximumSize">
                <size>
-                <width>600</width>
+                <width>2000</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -610,6 +610,15 @@ border-left: 0px;</string>
               </property>
               <property name="text">
                <string/>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>

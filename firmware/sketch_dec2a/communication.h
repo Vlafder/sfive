@@ -4,6 +4,7 @@
 void parse_params(String);
 String get_idle_val(void);
 String get_real_val(void);
+String get_model_info(void);
 
 
 
@@ -15,6 +16,7 @@ String get_real_val(void);
 #define STOP  2
 #define DROP  3
 #define GET   4
+#define INFO  5
 
 String answer, request;
 
@@ -64,9 +66,12 @@ void handle_request()
 				data_time   = 0;
 				break;
 			case GET:
-				answer = String(data_time) + " " + get_idle_val() + " " + get_real_val();
+				answer = String(data_time) + "|" + get_idle_val() + "|" + get_real_val();
     		Serial.println(answer);
 				break;
+      case INFO:
+				Serial.println(get_model_info());
+        break;
 		}
     Serial.flush();
 	}

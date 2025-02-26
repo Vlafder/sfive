@@ -15,19 +15,19 @@ class Device():
     def __init__(self, port='', baudrate=0):
         self.sp = False
         self.info = {
-            "port"   : port,
-            "status" : 'Не подключено',
-            "model"  : '',
-            "prak"   : '',
-            "about"  : '',
-            "author" : ''
+            "port"      : port,
+            "status"    : 'Не подключено',
+            "model"     : '',
+            "prak"      : '',
+            "about"     : '',
+            "author"    : ''
         }
 
         if port=='':
             return
 
         try:
-            self.sp = serial.Serial(port=port, baudrate=baudrate, timeout=0) 
+            self.sp = serial.Serial(port=port, baudrate=baudrate) 
             self.getInfo()
 
         except serial.SerialException as se:
@@ -55,7 +55,9 @@ class Device():
         self.sp.write(msg(f"{INFO}"))
         raw_data = self.sp.readline().decode().strip()
         
-        result = raw_data.split("\n")
+        result = raw_data.split("|")
+
+        print(raw_data)
         self.info["status"] = result[0]
         self.info["model"]  = result[1]
         self.info["prak"]   = result[2]
@@ -103,18 +105,23 @@ class Device():
 
     def get(self):
         if not self.sp:
-            return [0, 75, 75]
+            return []
 
-        self.sp.write(msg(f"{GET}"))
+        try:
+            self.sp.write(msg(f"{GET}"))
+        except Exception as e:
+            self.sp.close
+            self.info = Device().getModelInfo()
+            raise Exception
+        
         raw_data = self.sp.readline().decode().strip()
         
         result = raw_data.split(" ")
 
-        if(len(result)==3):
+        if(len(result)):
             return [int(i) for i in result]
         else:
-            print("GET error")
-            return [0, 75, 75]
+            return []
 
 
 def msg(text):
