@@ -15,19 +15,22 @@ class Device():
     def __init__(self, port='', baudrate=0):
         self.sp = False
         self.info = {
-            "port"      : port,
-            "status"    : 'Не подключено',
-            "model"     : '',
-            "prak"      : '',
-            "about"     : '',
-            "author"    : ''
-        }
+            "port"              : port,
+            "status"            : 'Не подключено',
+            "model"             : '',
+            "prak"              : '',
+            "about"             : '',
+            "author"            : '',
+            "plot_tepmlates"    : [],  #Все параметры графика, смотри спецификацию README.md в папке firmware
+            "pens"              : [],
+            "data_templates"    : [],
+        }   
 
         if port=='':
             return
 
         try:
-            self.sp = serial.Serial(port=port, baudrate=baudrate) 
+            self.sp = serial.Serial(port=port, baudrate=baudrate, timeout=0.3) 
             self.getInfo()
 
         except serial.SerialException as se:
@@ -35,14 +38,12 @@ class Device():
                 self.sp.close
             self.sp = False
             self.info["status"] = f"Ошибка: {str(se)}"
-            return
 
         except Exception as e:
             if self.sp.is_open:
                 self.sp.close
             self.sp = False
             self.info["status"] = f"Ошибка: {str(e)}"
-            return
 
 
     def __del__(self):
@@ -57,7 +58,6 @@ class Device():
         
         result = raw_data.split("|")
 
-        print(raw_data)
         self.info["status"] = result[0]
         self.info["model"]  = result[1]
         self.info["prak"]   = result[2]
@@ -73,14 +73,10 @@ class Device():
         if not self.sp:
             return 
 
-        #get signal number by name
-        signal = args[0]
-
-        #turn [3, 1, 2] -> "003001002"
-        params = ''.join([to_len_3(param) for param in args[1:]])
+        #turn [3, 1, 2] -> "3|1|2"
+        params = '|'.join(args)
 
         self.sp.write(msg(f"{SET}{signal}{params}"))
-        #print(self.msg(f"{SET}{signal}{params}"))
 
     def start(self):
         if not self.sp:
@@ -119,21 +115,10 @@ class Device():
         result = raw_data.split(" ")
 
         if(len(result)):
-            return [int(i) for i in result]
+            return [round(float(i)) for i in result]
         else:
             return []
 
 
 def msg(text):
     return bytes(text + "\n", 'utf-8')
-
-
-def to_len_3(param):
-    result = ["0", "0", "0"]
-
-    for i in range(3):
-        result[i] = str(param % 10);
-        param //= 10
-
-    #reverse a string
-    return ''.join(result[::-1])

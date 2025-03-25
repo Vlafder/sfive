@@ -12,7 +12,7 @@ from PyQt5.QtGui 		   \
 		    QWheelEvent
 
 from PyQt5.QtCore   \
-	import  QDate , \
+	import  QDate,  \
 			QTimer
 
 from PyQt5.QtWidgets      \
@@ -29,7 +29,8 @@ from PyQt5.QtWidgets      \
 			QLineEdit,    \
 			QDateEdit,    \
 			QButtonGroup, \
-			QWidget
+			QWidget,	  \
+			QSlider
 
 from xlwt \
 	import  Workbook 	#for excel export
@@ -67,27 +68,11 @@ class UI(QMainWindow):
 	def __init__(self):
 		super(UI, self).__init__()
 
-		#constants
-		self.max_height    = 150   # mm
-		self.max_freq      = 200   # 0.1Hz
-		self.max_time_span = 1000  #millisec
-		
-		#init default params
-		self.frequency  = 0      # 0.1Hz
-		self.amplitude  = 0      # mm
-		self.origin     = 75     # mm
-		self.signal     = "sine" # (triangular, sine, sawlike, square)
-
 		#sfive base dir
 		self.base_dir   = os.path.dirname(__file__) + "/../"
 
-		#plotting variables
-		self.data       = {
-			"time"  : [0],  			# 100 millisec
-			"idle"  : [self.origin],	# mm
-			"real"  : [self.origin]		# mm
-		}    
-		self.plot_graph  = PlotWidget()
+
+		self.plot_tepmlates  = [] 		# Templates for plot construction
 		self.sample_duration = 1 		# millisec
 		self.exchange = True
 
@@ -101,7 +86,8 @@ class UI(QMainWindow):
 		self.device = self.detectDevice()
 
 		#set plot
-		self.initPlot()
+		if self.device :
+			self.initPlot()
 
 		#setting update timers
 		self.set_updaters()
@@ -145,12 +131,17 @@ class UI(QMainWindow):
 			"about"			: self.findChild(QLabel, 	  	"about_lbl"),
 			"author"		: self.findChild(QLabel, 	  	"author_lbl"),
 			"detect"		: self.findChild(QPushButton, 	"detect_btn"),
+			"detect"		: self.findChild(QPushButton, 	"watch_btn"),
+			"k1_lbl"		: self.findChild(QLabel, 	  	"k1_lbl"),
+			"k1_slider"		: self.findChild(QSlider, 	  	"k1_slider"),
+			"k2_lbl"		: self.findChild(QLabel, 	  	"k2_lbl"),
+			"k2_slider"		: self.findChild(QSlider, 	  	"k2_slider"),
 		}
 
 		#enforce input constrains
-		self.ui_elements["frequency"].setValidator(QIntValidator(0, self.max_freq))
-		self.ui_elements["amplitude"].setValidator(QIntValidator(0, self.max_height))
-		self.ui_elements["origin"].setValidator(QIntValidator(0, self.max_height))
+		self.ui_elements["frequency"].setValidator(QIntValidator(self.form_limits["min_freq"], self.form_limits["max_freq"]))
+		self.ui_elements["amplitude"].setValidator(QIntValidator(self.form_limits["min_amp"], self.form_limits["max_amp"]))
+		self.ui_elements["origin"].setValidator(QIntValidator(self.form_limits["min_orig"], self.form_limits["max_orig"]))
 
 		#apply images
 		self.findChild(QLabel, "sfive_logo").setPixmap(QPixmap(self.base_dir + "icons/sfive.png"))
@@ -166,38 +157,36 @@ class UI(QMainWindow):
 		self.ui_elements["export"].clicked.connect(self.export)
 		self.ui_elements["apply_params"].clicked.connect(self.apply_params)
 		self.ui_elements["detect"].clicked.connect(self.detectDevice)
+		self.ui_elements["k1_slider"].valueChanged.connect(self.update_koef)
+		self.ui_elements["k2_slider"].valueChanged.connect(self.update_koef)
 
 		#set today date
 		self.ui_elements["date"].setDate(QDate.currentDate())
 
 	#setting plot and etc.
 	def initPlot(self):
-		#add graph
-		self.ui_elements["graph_layout"].addWidget(self.plot_graph)
+		for i in range(len(plot_tepmlates)):
+			#add graph
+			self.ui_elements["graph_layout"].addWidget(plot_tepmlates[i])
 
-		#configure graph
-		self.plot_graph.setBackground("w")
-		self.plot_graph.showGrid(x = True, y = True)
-		self.plot_graph.setYRange(0, self.max_height)
-		self.plot_graph.setMouseEnabled(x=True, y=False)
-		self.plot_graph.setLabel("left", "Высота mm")
-		self.plot_graph.setLabel("bottom", "Время sec")
+			#configure graph
+			self.plot_tepmlates[i].setBackground("w")
+			self.plot_tepmlates[i].showGrid(x = True, y = True)
+			self.plot_tepmlates[i].setMouseEnabled(x=True, y=False)
 
-		self.idle = self.plot_graph.plot(
-						name="Ожидаемое положение",
-						pen=mkPen(color=(255, 0, 0)),
-					 )
+			self.plot_tepmlates[i].setYRange(self.plot_tepmlates[i]["height_bottom"], self.plot_tepmlates[i]["height_top"])
+			self.plot_tepmlates[i].setLabel("left", self.plot_tepmlates[i]["left_label"])
+			self.plot_tepmlates[i].setLabel("bottom", self.plot_tepmlates[i]["bottom_label"])
 
-		self.real = self.plot_graph.plot(
-						name="Фактическое положение",
-						pen=mkPen(color=(0, 0, 255)),
-					 )
+			self.pens.append([]);
+			for pen in plot_tepmlates[i]["pens"]:
+				self.pens.append( self.plot_graph.plot(name=pen["label"], pen=mkPen(color=pen["color"])) )
 
 	def detectDevice(self):
 		self.exchange = False
 
 		device = Device()
-		
+
 		match platform.system():
 			case 'Linux': 
 				device = Device(port='/dev/ttyACM0', baudrate=500000)
@@ -213,9 +202,13 @@ class UI(QMainWindow):
 		self.ui_elements["model"].setText(info["model"])
 		self.ui_elements["prak"].setText(info["prak"])
 		self.ui_elements["about"].setText(info["about"])
-		self.ui_elements["author"].setText(info["author"])
+		self.ui_elements["author"].setText(info["author"])	
 
-		self.exchange = True
+		if ("Ошибка" not in info["status"]):
+			self.exchange = True
+			self.plot_tepmlates = info["plot_tepmlates"]
+			self.data_templates = info["data_templates"]
+			self.form_limits    = info["form_limits"]
 
 		return device
 		
@@ -231,18 +224,11 @@ class UI(QMainWindow):
 
 	#delete aqquaried data
 	def drop(self):
+		#clear data
 		self.data["time"].clear()
-		self.data["idle"].clear()
-		self.data["real"].clear()
-
-		#set "zeroes"
-		self.data["time"].append(0)
-		self.data["idle"].append(self.origin)
-		self.data["real"].append(self.origin)
-
-		#дописать отчитку графика
-		self.idle.setData( self.data["time"], self.data["idle"])
-		self.real.setData( self.data["time"], self.data["real"])
+		for i in range(len(plot_tepmlates)):
+			for j in range(len(plot_tepmlates[i])):
+				self.data[i][j].clear()
 
 		#drop data on device
 		self.device.drop()
@@ -266,6 +252,11 @@ class UI(QMainWindow):
 
 		wb.save(os.path.abspath(f"~/Desktop{self.ui_elements['title'].text()}.xls"))
 
+	def update_koef(self):
+		self.ui_elements["k1_lbl"].setText(str(self.ui_elements["k1_slider"].value()))
+		self.ui_elements["k2_lbl"].setText(str(self.ui_elements["k2_slider"].value()))
+		self.apply_params()
+
 	#applying parameters
 	def apply_params(self):
 		#getting raw parameters
@@ -282,7 +273,7 @@ class UI(QMainWindow):
 		}
 		
 		#mapping and applying parameters
-		self.frequency = int((0, frq)[ frq!="" ]) # = (frq == "") ? 0 : frq 
+		self.frequency = int((0, frq)[ frq!="" ]) # <=> (frq == "") ? 0 : frq 
 		self.amplitude = int((0, amp)[ amp!="" ])
 		self.origin    = int((0, ori)[ ori!="" ])
 		self.signal    = sig
@@ -294,7 +285,7 @@ class UI(QMainWindow):
 		self.ui_elements["sig_lbl"].setText(locale[self.signal])
 
 		#send new params to device
-		self.device.set(signal_num[self.signal], self.frequency, self.amplitude, self.origin)
+		self.device.set(signal_num[self.signal], self.frequency, self.amplitude, self.origin, self.k1, self.k2)
 
 	def set_updaters(self):
 		self.timer.setInterval(self.sample_duration)
@@ -317,13 +308,14 @@ class UI(QMainWindow):
 				return
 
 			self.data["time"].append(raw_data[0])
-			self.data["idle"].append(raw_data[1])
-			self.data["real"].append(raw_data[2])
+			index = 1
+			for i in range(len(plot_tepmlates)):
+				for j in range(len(plot_tepmlates[i])):
+					self.data[i][j].append(raw_data[index])
+					self.idle.setData( self.data["time"], self.data[i][j])
+					index += 1
 
-			sample_count = int(1000/self.sample_duration)
-
-			self.idle.setData( self.data["time"][-sample_count:], self.data["idle"][-sample_count:])
-			self.real.setData( self.data["time"][-sample_count:], self.data["real"][-sample_count:])
+			
 			
 
 

@@ -21,7 +21,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="graph">
        <property name="contextMenuPolicy">
@@ -77,37 +77,179 @@
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="start_btn">
-                <property name="styleSheet">
-                 <string notr="true">background-color: rgb(18, 131, 0);
+               <layout class="QVBoxLayout" name="verticalLayout_11">
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_9">
+                  <item>
+                   <widget class="QPushButton" name="start_btn">
+                    <property name="styleSheet">
+                     <string notr="true">background-color: rgb(18, 131, 0);
 color: rgb(255, 255, 255);</string>
-                </property>
-                <property name="text">
-                 <string>Старт</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="stop_btn">
-                <property name="styleSheet">
-                 <string notr="true">background-color: rgb(227, 204, 0);
+                    </property>
+                    <property name="text">
+                     <string>Старт</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="stop_btn">
+                    <property name="styleSheet">
+                     <string notr="true">background-color: rgb(227, 204, 0);
 color: rgb(255, 255, 255);</string>
-                </property>
-                <property name="text">
-                 <string>Стоп</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="drop_btn">
-                <property name="styleSheet">
-                 <string notr="true">background-color: rgb(224, 27, 36);
+                    </property>
+                    <property name="text">
+                     <string>Стоп</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="drop_btn">
+                    <property name="styleSheet">
+                     <string notr="true">background-color: rgb(224, 27, 36);
 color: rgb(255, 255, 255);</string>
-                </property>
-                <property name="text">
-                 <string>Сброс</string>
-                </property>
-               </widget>
+                    </property>
+                    <property name="text">
+                     <string>Сброс</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="watch_btn">
+                    <property name="styleSheet">
+                     <string notr="true">background-color: rgb(138, 5, 255);
+color: rgb(255, 255, 255);</string>
+                    </property>
+                    <property name="text">
+                     <string>Следить</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_10">
+                  <item>
+                   <widget class="QLabel" name="label_2">
+                    <property name="minimumSize">
+                     <size>
+                      <width>30</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>k1</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSlider" name="k1_slider">
+                    <property name="styleSheet">
+                     <string notr="true">color: rgb(28, 113, 216);</string>
+                    </property>
+                    <property name="maximum">
+                     <number>100</number>
+                    </property>
+                    <property name="value">
+                     <number>50</number>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="k1_lbl">
+                    <property name="minimumSize">
+                     <size>
+                      <width>30</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>0</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_11">
+                  <item>
+                   <widget class="QLabel" name="label_4">
+                    <property name="minimumSize">
+                     <size>
+                      <width>30</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <property name="text">
+                     <string>k2</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSlider" name="k2_slider">
+                    <property name="maximum">
+                     <number>100</number>
+                    </property>
+                    <property name="value">
+                     <number>50</number>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="k2_lbl">
+                    <property name="minimumSize">
+                     <size>
+                      <width>30</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>0</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_9">
+                  <property name="minimumSize">
+                   <size>
+                    <width>20</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
                <spacer name="horizontalSpacer_4">
@@ -191,7 +333,7 @@ color: rgb(255, 255, 255);</string>
                  <x>10</x>
                  <y>30</y>
                  <width>301</width>
-                 <height>91</height>
+                 <height>110</height>
                 </rect>
                </property>
                <layout class="QFormLayout" name="formLayout">
