@@ -2,8 +2,8 @@
 
 //User defined callbacks
 void parse_params(String);
-String get_idle_val(void);
-String get_real_val(void);
+int get_idle_val();
+int get_real_val();
 String get_model_info(void);
 
 //Commands
@@ -13,6 +13,12 @@ String get_model_info(void);
 #define DROP  3
 #define GET   4
 #define INFO  5
+
+//Signal forms
+#define TRIANGULAR 0
+#define SINE       1
+#define SAWLIKE    2
+#define SQUARE     3
 
 String answer, request;
 
@@ -69,7 +75,7 @@ void handle_request()
 				data_time   = 0;
 				break;
 			case GET:
-				answer = String(data_time) + "|" + get_idle_val() + "|" + get_real_val();
+				answer = String(data_time) + "|" + String(get_idle_val()) + "|" + String(get_real_val());
     		Serial.println(answer);
 				break;
       case INFO:

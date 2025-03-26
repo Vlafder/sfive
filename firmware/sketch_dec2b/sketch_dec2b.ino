@@ -6,11 +6,6 @@
 
 
 //User defined settings -------------------------------
-#define TRIANGULAR 0
-#define SINE       1
-#define SAWLIKE    2
-#define SQUARE     3
-
 #define INFOMSG "Готово к работе|Левитатор ECP-730|Магнитная левитация|www.github.com/vlafder/sfive|Чемякин В.C."
 
 
@@ -20,12 +15,6 @@ void setup()
 	initCom();
   initPhysics();
 }
-
-void loop()
-{
-  set_height(idle_val(data_time));
-}
-
 
 
 
@@ -41,7 +30,7 @@ void parse_params(String new_params)
 	params.origin = to_uint(new_params, 8, 3);
 }
 
-String get_idle_val()
+int get_idle_val()
 {
   //Return string aca "<idle_val_1>|<idle_val_2>|<...>|<idle_val_last>"
 	double idle_pos = params.origin;
@@ -49,23 +38,23 @@ String get_idle_val()
   switch (params.signal) 
   {
     case SINE:
-      idle_pos = sine_form();
+      idle_pos = sine_form(data_time);
       break;
     case TRIANGULAR:
-      idle_pos = triang_form();
+      idle_pos = triang_form(data_time);
       break;
     case SAWLIKE:
-      idle_pos = sawlike_form();
+      idle_pos = sawlike_form(data_time);
       break;
     case SQUARE:
-      idle_pos = sign_form();
+      idle_pos = sign_form(data_time);
       break;
   }
   
-  return String(int(idle_pos*params.amp + params.origin));
+  return (int)(idle_pos*params.amp + params.origin);
 }
 
-String get_real_val()
+int get_real_val()
 {
 	//Return string aca "<real_val_1>|<real_val_2>|<...>|<real_val_last>"
 	return get_height();
@@ -74,4 +63,11 @@ String get_real_val()
 String get_model_info(void)
 {
   return String(INFOMSG);
+}
+
+
+//Main loop
+void loop()
+{
+  set_height(get_idle_val());
 }

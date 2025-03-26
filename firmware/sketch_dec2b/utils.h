@@ -1,3 +1,6 @@
+
+
+
 #define sgn(x) ((x) < 0 ? -1 : ((x) > 0 ? 1 : 0))
 
 //signal form functions ---------------------------------------
@@ -9,7 +12,7 @@ double sine_form(int time)
 
 double sign_form(int time) 
 {
-  return sgn(sine_form());
+  return sgn(sine_form(time));
 }
 
 double sawlike_form(int time)
@@ -29,5 +32,5 @@ double triang_form(int time)
 
   double T = 1.f/params.freq;
 
-  return (-1 + 4.f/T * fmod((float(time)/1000), T/2))*sgn(sine_form());
+  return (-1 + 4.f/T * fmod((float(time)/1000), T/2))*sgn(sine_form(time));
 }

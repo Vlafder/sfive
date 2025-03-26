@@ -1,3 +1,6 @@
+
+
+
 #define IN1 PA8
 #define IN2 PA9
 #define SLEEPn PB3
@@ -46,7 +49,7 @@ int get_height()
 
 
 
-int set_height(unsigned int height)
+void set_height(unsigned int height)
 {
   analogWrite(IN1, (int)(84.28 + 11.04*height - 0.59*height*height + 0.01*height*height*height));
 }
