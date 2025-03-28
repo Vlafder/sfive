@@ -5,6 +5,8 @@
    "upper_limit": 150,
    "lower_limit": -10,
    "width": 5000,
+   "left_lable": "миллиМетры",
+   "bottom_lable": "миллиСекунды",
    "graphs": {
     "0": {
      "name": "Высота с датчика",
@@ -28,6 +30,8 @@
    "upper_limit": 150,
    "lower_limit": -10,
    "width": 5000,
+   "left_lable": "миллиАмперы",
+   "bottom_lable": "миллиСекунды",
    "graphs": {
     "3": {
      "name": "Ток в нижней катушке",

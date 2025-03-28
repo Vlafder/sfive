@@ -90,6 +90,8 @@ class UI(QMainWindow):
 		#Connect the model
 		self.device = self.detectDevice()
 
+		self.plots = []
+
 		#set plot
 		if self.device :
 			self.initPlots()
@@ -181,12 +183,12 @@ class UI(QMainWindow):
 			self.plot.showGrid(x = True, y = True)
 			self.plot.setMouseEnabled(x=True, y=False)
 
-			self.plot.setYRange(self.plot["height_bottom"], self.plot["height_top"])
-			self.plot.setLabel("left", self.plot["left_label"])
+			self.plot.setYRange(self.plot["lower_limit"], self.plot["upper_limit"])
+			self.plot.setLabel("left", self.plot["left_lable"])
 			self.plot.setLabel("bottom", self.plot["bottom_label"])
 
 			self.pens.append([]);
-			for pen in plot["graphs"].values()[0]:
+			for pen in plot["graphs"].values():
 				self.pens.append( self.plot_graph.plot(name=pen["name"], pen=mkPen(color=pen["color"])) )
 
 	def detectDevice(self):
@@ -296,10 +298,10 @@ class UI(QMainWindow):
 
 	def set_updaters(self):
 		self.timer.setInterval(self.sample_duration)
-		self.timer.timeout.connect(self.update_plot)
+		self.timer.timeout.connect(self.update_plots)
 		self.timer.start()
 
-	def update_plot(self):
+	def update_plots(self):
 		if(self.exchange):
 			#get data from device [time, idle_val(-s), real_val(-s)]
 			try:
