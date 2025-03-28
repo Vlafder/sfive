@@ -2,6 +2,7 @@ import serial
 import numpy as np
 import time
 import atexit
+import json 
 
 SET   = 0 
 START = 1
@@ -22,8 +23,6 @@ class Device():
             "about"             : '',
             "author"            : '',
             "plot_tepmlates"    : [],  #Все параметры графика, смотри спецификацию README.md в папке firmware
-            "pens"              : [],
-            "data_templates"    : [],
         }   
 
         if port=='':
@@ -63,6 +62,10 @@ class Device():
         self.info["prak"]   = result[2]
         self.info["about"]  = result[3]
         self.info["author"] = result[4]
+
+        gui_requirements = json.loads(result[5])
+        self.info["plot_tepmlates"] = gui_requirements["plot_tepmlates"]
+        print(self.info["plot_tepmlates"])
 
 
     def getModelInfo(self):

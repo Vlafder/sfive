@@ -71,8 +71,13 @@ class UI(QMainWindow):
 		#sfive base dir
 		self.base_dir   = os.path.dirname(__file__) + "/../"
 
+		#init default params
+		self.frequancy  = 0      # 0.1Hz
+		self.amplitude  = 0      # mm
+		self.origin     = 75     # mm
+		self.signal     = "sine" # (triangular, sine, sawlike, square)
 
-		self.plot_tepmlates  = [] 		# Templates for plot construction
+		self.plot  = [] 		# Templates for plot construction
 		self.sample_duration = 1 		# millisec
 		self.exchange = True
 
@@ -87,7 +92,7 @@ class UI(QMainWindow):
 
 		#set plot
 		if self.device :
-			self.initPlot()
+			self.initPlots()
 
 		#setting update timers
 		self.set_updaters()
@@ -139,9 +144,9 @@ class UI(QMainWindow):
 		}
 
 		#enforce input constrains
-		self.ui_elements["frequency"].setValidator(QIntValidator(self.form_limits["min_freq"], self.form_limits["max_freq"]))
-		self.ui_elements["amplitude"].setValidator(QIntValidator(self.form_limits["min_amp"], self.form_limits["max_amp"]))
-		self.ui_elements["origin"].setValidator(QIntValidator(self.form_limits["min_orig"], self.form_limits["max_orig"]))
+		#self.ui_elements["frequency"].setValidator(QIntValidator(self.device.info["min_freq"], self.device.info["max_freq"]))
+		#self.ui_elements["amplitude"].setValidator(QIntValidator(self.device.info["min_amp"], self.device.info["max_amp"]))
+		#self.ui_elements["origin"].setValidator(QIntValidator(self.device.info["min_orig"], self.device.info["max_orig"]))
 
 		#apply images
 		self.findChild(QLabel, "sfive_logo").setPixmap(QPixmap(self.base_dir + "icons/sfive.png"))
@@ -164,23 +169,25 @@ class UI(QMainWindow):
 		self.ui_elements["date"].setDate(QDate.currentDate())
 
 	#setting plot and etc.
-	def initPlot(self):
-		for i in range(len(plot_tepmlates)):
+	def initPlots(self):
+		self.plots.grid_remove() #remove previouse graphs
+
+		for plot in device.info["plot_tepmlates"].values():
 			#add graph
-			self.ui_elements["graph_layout"].addWidget(plot_tepmlates[i])
+			self.ui_elements["graph_layout"].addWidget(PlotWidget())
 
 			#configure graph
-			self.plot_tepmlates[i].setBackground("w")
-			self.plot_tepmlates[i].showGrid(x = True, y = True)
-			self.plot_tepmlates[i].setMouseEnabled(x=True, y=False)
+			self.plot.setBackground("w")
+			self.plot.showGrid(x = True, y = True)
+			self.plot.setMouseEnabled(x=True, y=False)
 
-			self.plot_tepmlates[i].setYRange(self.plot_tepmlates[i]["height_bottom"], self.plot_tepmlates[i]["height_top"])
-			self.plot_tepmlates[i].setLabel("left", self.plot_tepmlates[i]["left_label"])
-			self.plot_tepmlates[i].setLabel("bottom", self.plot_tepmlates[i]["bottom_label"])
+			self.plot.setYRange(self.plot["height_bottom"], self.plot["height_top"])
+			self.plot.setLabel("left", self.plot["left_label"])
+			self.plot.setLabel("bottom", self.plot["bottom_label"])
 
 			self.pens.append([]);
-			for pen in plot_tepmlates[i]["pens"]:
-				self.pens.append( self.plot_graph.plot(name=pen["label"], pen=mkPen(color=pen["color"])) )
+			for pen in plot["graphs"].values()[0]:
+				self.pens.append( self.plot_graph.plot(name=pen["name"], pen=mkPen(color=pen["color"])) )
 
 	def detectDevice(self):
 		self.exchange = False
@@ -202,13 +209,10 @@ class UI(QMainWindow):
 		self.ui_elements["model"].setText(info["model"])
 		self.ui_elements["prak"].setText(info["prak"])
 		self.ui_elements["about"].setText(info["about"])
-		self.ui_elements["author"].setText(info["author"])	
+		self.ui_elements["author"].setText(info["author"])
 
 		if ("Ошибка" not in info["status"]):
 			self.exchange = True
-			self.plot_tepmlates = info["plot_tepmlates"]
-			self.data_templates = info["data_templates"]
-			self.form_limits    = info["form_limits"]
 
 		return device
 		
@@ -226,8 +230,11 @@ class UI(QMainWindow):
 	def drop(self):
 		#clear data
 		self.data["time"].clear()
-		for i in range(len(plot_tepmlates)):
-			for j in range(len(plot_tepmlates[i])):
+
+		plot_count = len(device.info["plot"].keys())
+		for i in range(plot_count):
+			graph_count = len(device.info["plot"][f"{i}"]["graphs"].keys())
+			for j in range(graph_count):
 				self.data[i][j].clear()
 
 		#drop data on device
@@ -273,7 +280,7 @@ class UI(QMainWindow):
 		}
 		
 		#mapping and applying parameters
-		self.frequency = int((0, frq)[ frq!="" ]) # <=> (frq == "") ? 0 : frq 
+		self.frequency = int((0, frq)[ frq!="" ])*10 # <=> (frq == "") ? 0 : frq 
 		self.amplitude = int((0, amp)[ amp!="" ])
 		self.origin    = int((0, ori)[ ori!="" ])
 		self.signal    = sig
@@ -309,8 +316,10 @@ class UI(QMainWindow):
 
 			self.data["time"].append(raw_data[0])
 			index = 1
-			for i in range(len(plot_tepmlates)):
-				for j in range(len(plot_tepmlates[i])):
+			plot_count = len(device.info["plot"].keys())
+			for i in range(plot_count):
+				graph_count = len(device.info["plot"][f"{i}"]["graphs"].keys())
+				for j in range(graph_count):
 					self.data[i][j].append(raw_data[index])
 					self.idle.setData( self.data["time"], self.data[i][j])
 					index += 1

@@ -6,8 +6,8 @@
 
 
 //User defined settings -------------------------------
-#define INFOMSG "Готово к работе|Левитатор ECP-730|Магнитная левитация|www.github.com/vlafder/sfive|Чемякин В.C."
-
+#define INFOMSG "Готово к работе|Левитатор ECP-730|Магнитная левитация|www.github.com/vlafder/sfive|Чемякин В.C.|"
+#define PLOT_TEMPALTES "{ \"plots\": {  \"0\": {   \"name\": \"Высота от времени\",   \"upper_limit\": 150,   \"lower_limit\": -10,   \"width\": 5000,   \"graphs\": {    \"0\": {     \"name\": \"Высота с датчика\",     \"color\": [255, 0, 0, 0.5],     \"width\": 1    },    \"1\": {     \"name\": \"Высота после фильтра\",     \"color\": [0, 0, 255, 1],     \"width\": 1    },    \"2\": {     \"name\": \"Целевая высота\",     \"color\": [0, 0, 255, 1],     \"width\": 1    }   }  },  \"1\": {   \"name\": \"Ток от времени\",   \"upper_limit\": 150,   \"lower_limit\": -10,   \"width\": 5000,   \"graphs\": {    \"3\": {     \"name\": \"Ток в нижней катушке\",     \"color\": [0, 0, 0, 1],     \"width\": 1    }   }  } }}"
 
 void setup() 
 {
@@ -62,17 +62,11 @@ float get_real_val()
 
 String get_model_info(void)
 {
-  return String(INFOMSG);
+  return String(INFOMSG) + String(PLOT_TEMPALTES);
 }
 
 
 //Main loop
 void loop()
 {
-  set_height(get_idle_val());
-  Serial.print(millis());
-  Serial.print(" ");
-  Serial.print(get_real_val());
-  Serial.print(" ");
-  Serial.println(get_idle_val());
 }

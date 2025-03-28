@@ -72,7 +72,7 @@ void handle_request()
 				exchange = 0;
 				break;
 			case DROP:
-				data_time   = 0;
+				data_time = 0;
 				break;
 			case GET:
 				answer = String(data_time) + "|" + String(get_idle_val()) + "|" + String(get_real_val());
