@@ -90,7 +90,7 @@ class UI(QMainWindow):
 		#Connect the model
 		self.device = self.detectDevice()
 
-		self.plots = []
+		self.pens  = [] #graphs
 
 		#set plot
 		if self.device :
@@ -172,24 +172,28 @@ class UI(QMainWindow):
 
 	#setting plot and etc.
 	def initPlots(self):
-		self.plots.grid_remove() #remove previouse graphs
+		for i in reversed(range(self.ui_elements["graph_layout"].count())): #remove previouse plots
+			self.ui_elements["graph_layout"].takeAt(i).setParent(None)
 
-		for plot in device.info["plot_tepmlates"].values():
+		self.pens.clear() #remove previouse graphs
+
+
+		for index, plot in self.device.info["plot_tepmlates"].items():
 			#add graph
-			self.ui_elements["graph_layout"].addWidget(PlotWidget())
+			self.plots[index] = PlotWidget()
+			self.ui_elements["graph_layout"].addWidget()
 
 			#configure graph
-			self.plot.setBackground("w")
-			self.plot.showGrid(x = True, y = True)
-			self.plot.setMouseEnabled(x=True, y=False)
+			self.plots[index].setBackground("w")
+			self.plots[index].showGrid(x = True, y = True)
+			self.plots[index].setMouseEnabled(x=True, y=False)
 
-			self.plot.setYRange(self.plot["lower_limit"], self.plot["upper_limit"])
-			self.plot.setLabel("left", self.plot["left_lable"])
-			self.plot.setLabel("bottom", self.plot["bottom_label"])
+			self.plots[index].setYRange(self.plots[index]["lower_limit"], self.plots[index]["upper_limit"])
+			self.plots[index].setLabel("left", self.plots[index]["left_lable"])
+			self.plots[index].setLabel("bottom", self.plots[index]["bottom_label"])
 
-			self.pens.append([]);
 			for pen in plot["graphs"].values():
-				self.pens.append( self.plot_graph.plot(name=pen["name"], pen=mkPen(color=pen["color"])) )
+				self.pens.append( self.plots[index].plot(name=pen["name"], pen=mkPen(color=pen["color"])) )
 
 	def detectDevice(self):
 		self.exchange = False
