@@ -87,14 +87,13 @@ class UI(QMainWindow):
 		#getting ui ready
 		self.initUI()
 
-		#Connect the model
-		self.device = self.detectDevice()
-
 		self.pens  = [] #graphs
+		self.plots = [] #plots
+		self.data  = [] #points for graphs
 
-		#set plot
-		if self.device :
-			self.initPlots()
+		#Connect the model
+		self.device = Device()
+		self.detectDevice()
 
 		#setting update timers
 		self.set_updaters()
@@ -172,43 +171,49 @@ class UI(QMainWindow):
 
 	#setting plot and etc.
 	def initPlots(self):
+		if not self.exchange:
+			return
+
 		for i in reversed(range(self.ui_elements["graph_layout"].count())): #remove previouse plots
 			self.ui_elements["graph_layout"].takeAt(i).setParent(None)
+		self.plots.clear()
 
 		self.pens.clear() #remove previouse graphs
 
 
-		for index, plot in self.device.info["plot_tepmlates"].items():
+		for index, plot in self.device.info["plot_tepmlates"]["plots"].items():
+			index = int(index)
 			#add graph
-			self.plots[index] = PlotWidget()
-			self.ui_elements["graph_layout"].addWidget()
+			self.plots.append(PlotWidget())
+			self.ui_elements["graph_layout"].addWidget(self.plots[index])
 
 			#configure graph
 			self.plots[index].setBackground("w")
 			self.plots[index].showGrid(x = True, y = True)
 			self.plots[index].setMouseEnabled(x=True, y=False)
 
-			self.plots[index].setYRange(self.plots[index]["lower_limit"], self.plots[index]["upper_limit"])
-			self.plots[index].setLabel("left", self.plots[index]["left_lable"])
-			self.plots[index].setLabel("bottom", self.plots[index]["bottom_label"])
+			self.plots[index].setYRange(plot["lower_limit"], plot["upper_limit"])
+			self.plots[index].setLabel("left", plot["left_lable"])
+			self.plots[index].setLabel("bottom", plot["bottom_label"])
 
-			for pen in plot["graphs"].values():
-				self.pens.append( self.plots[index].plot(name=pen["name"], pen=mkPen(color=pen["color"])) )
+			for pencil in plot["graphs"].values():
+				print(pencil["color"])
+				self.pens.append( self.plots[index].plot(name=f'{pencil["name"]}', pen=mkPen(color=pencil["color"], width=pencil["width"])) )
 
 	def detectDevice(self):
 		self.exchange = False
 
-		device = Device()
+		self.device = Device()
 
 		match platform.system():
 			case 'Linux': 
-				device = Device(port='/dev/ttyACM0', baudrate=500000)
+				self.device = Device(port='/dev/ttyACM0', baudrate=500000)
 			case 'Darwin': 
-				device = Device()
+				self.device = Device()
 			case 'Windows': 
-				device = Device()
+				self.device = Device()
 
-		info = device.getModelInfo()
+		info = self.device.getModelInfo()
 
 		self.ui_elements["port"].setText(info["port"])
 		self.ui_elements["status"].setText(info["status"])
@@ -220,8 +225,9 @@ class UI(QMainWindow):
 		if ("Ошибка" not in info["status"]):
 			self.exchange = True
 
-		return device
-		
+		self.drop()
+		self.initPlots()
+
 	#start data exchange
 	def start(self):
 		self.exchange = True
@@ -235,16 +241,19 @@ class UI(QMainWindow):
 	#delete aqquaried data
 	def drop(self):
 		#clear data
-		self.data["time"].clear()
+		self.data.clear()
+		self.data.append([])
 
-		plot_count = len(device.info["plot"].keys())
-		for i in range(plot_count):
-			graph_count = len(device.info["plot"][f"{i}"]["graphs"].keys())
-			for j in range(graph_count):
-				self.data[i][j].clear()
+		if (self.exchange):
+			for index, plot in self.device.info["plot_tepmlates"]["plots"].items():
+				for num in plot["graphs"].keys():
+					self.data.append([])
 
 		#drop data on device
-		self.device.drop()
+		try:
+			self.device.drop()
+		except:
+			pass
 
 	#export to excel
 	def export(self):
@@ -277,6 +286,8 @@ class UI(QMainWindow):
 		amp = self.ui_elements["amplitude"].text()
 		ori = self.ui_elements["origin"].text()
 		sig = self.ui_elements["signal"].checkedButton().objectName()
+		self.k1 = self.ui_elements["k1_lbl"].text()
+		self.k2 = self.ui_elements["k2_lbl"].text()
 
 		locale = {
 			"triangular" : "Треугольная",
@@ -290,6 +301,8 @@ class UI(QMainWindow):
 		self.amplitude = int((0, amp)[ amp!="" ])
 		self.origin    = int((0, ori)[ ori!="" ])
 		self.signal    = sig
+		self.k1    	   = int(k1)
+		self.k2    	   = int(k2)
 
 		#applying changes to export parameters
 		self.ui_elements["frq_lbl"].setText(str(self.frequency))
@@ -306,13 +319,14 @@ class UI(QMainWindow):
 		self.timer.start()
 
 	def update_plots(self):
+		#if(self.exchange):
 		if(self.exchange):
 			#get data from device [time, idle_val(-s), real_val(-s)]
 			try:
 				raw_data = self.device.get()
 			except Exception:
 				self.exchange = False
-				self.device = self.detectDevice()
+				self.detectDevice()
 				return
 
 			if raw_data==[] :
@@ -320,14 +334,13 @@ class UI(QMainWindow):
 				self.ui_elements["status"] = "Ошибка передачи данных"
 				return
 
-			self.data["time"].append(raw_data[0])
+			self.data[0].append(raw_data[0])
 			index = 1
-			plot_count = len(device.info["plot"].keys())
-			for i in range(plot_count):
-				graph_count = len(device.info["plot"][f"{i}"]["graphs"].keys())
-				for j in range(graph_count):
-					self.data[i][j].append(raw_data[index])
-					self.idle.setData( self.data["time"], self.data[i][j])
+			for plot in self.device.info["plot_tepmlates"]["plots"].values():
+				for j in plot["graphs"].keys():
+					self.data[index].append(raw_data[index])
+					#print(self.data[index])
+					self.pens[index-1].setData( self.data[0], self.data[index])
 					index += 1
 
 			

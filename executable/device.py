@@ -3,6 +3,7 @@ import numpy as np
 import time
 import atexit
 import json 
+import time
 
 SET   = 0 
 START = 1
@@ -17,12 +18,12 @@ class Device():
         self.sp = False
         self.info = {
             "port"              : port,
-            "status"            : 'Не подключено',
+            "status"            : 'Ошибка: Не подключено',
             "model"             : '',
             "prak"              : '',
             "about"             : '',
             "author"            : '',
-            "plot_tepmlates"    : [],  #Все параметры графика, смотри спецификацию README.md в папке firmware
+            "plot_tepmlates"    : {}
         }   
 
         if port=='':
@@ -104,7 +105,7 @@ class Device():
 
     def get(self):
         if not self.sp:
-            return []
+            return [round(time.time())%100, 15, 18, 0, 50]
 
         try:
             self.sp.write(msg(f"{GET}"))

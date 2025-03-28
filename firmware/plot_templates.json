@@ -5,22 +5,22 @@
    "upper_limit": 150,
    "lower_limit": -10,
    "width": 5000,
-   "left_lable": "миллиМетры",
-   "bottom_lable": "миллиСекунды",
+   "left_label": "миллиМетры",
+   "bottom_label": "миллиСекунды",
    "graphs": {
     "0": {
      "name": "Высота с датчика",
-     "color": [255, 0, 0, 0.5],
+     "color": [255, 0, 0],
      "width": 1
     },
     "1": {
      "name": "Высота после фильтра",
-     "color": [0, 0, 255, 1],
+     "color": [0, 0, 255],
      "width": 1
     },
     "2": {
      "name": "Целевая высота",
-     "color": [0, 0, 255, 1],
+     "color": [0, 0, 255],
      "width": 1
     }
    }
@@ -30,12 +30,12 @@
    "upper_limit": 150,
    "lower_limit": -10,
    "width": 5000,
-   "left_lable": "миллиАмперы",
-   "bottom_lable": "миллиСекунды",
+   "left_label": "миллиАмперы",
+   "bottom_label": "миллиСекунды",
    "graphs": {
     "3": {
      "name": "Ток в нижней катушке",
-     "color": [0, 0, 0, 1],
+     "color": [0, 0, 0],
      "width": 1
     }
    }
