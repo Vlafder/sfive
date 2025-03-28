@@ -3,7 +3,7 @@
 //User defined callbacks
 void parse_params(String);
 int get_idle_val();
-int get_real_val();
+float get_real_val();
 String get_model_info(void);
 
 //Commands
@@ -31,10 +31,10 @@ void handle_request();
 
 
 size_t data_time   = 0;
-char   exchange    = 0;
+char   exchange    = 1;
 struct {
 	u_int signal;
-	u_int freq;
+	float freq;
 	u_int amp;
 	u_int origin;
 } params;

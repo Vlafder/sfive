@@ -11,7 +11,7 @@
 
 void setup() 
 {
-	params = {0, 0, 0, 75};
+	params = {3, 0.4, 5, 20};
 	initCom();
   initPhysics();
 }
@@ -38,26 +38,26 @@ int get_idle_val()
   switch (params.signal) 
   {
     case SINE:
-      idle_pos = sine_form(data_time);
+      idle_pos = sine_form();
       break;
     case TRIANGULAR:
-      idle_pos = triang_form(data_time);
+      idle_pos = triang_form();
       break;
     case SAWLIKE:
-      idle_pos = sawlike_form(data_time);
+      idle_pos = sawlike_form();
       break;
     case SQUARE:
-      idle_pos = sign_form(data_time);
+      idle_pos = sign_form();
       break;
   }
   
   return (int)(idle_pos*params.amp + params.origin);
 }
 
-int get_real_val()
+float get_real_val()
 {
 	//Return string aca "<real_val_1>|<real_val_2>|<...>|<real_val_last>"
-	return get_height();
+	return lff_filter(get_height());
 }
 
 String get_model_info(void)
@@ -70,4 +70,9 @@ String get_model_info(void)
 void loop()
 {
   set_height(get_idle_val());
+  Serial.print(millis());
+  Serial.print(" ");
+  Serial.print(get_real_val());
+  Serial.print(" ");
+  Serial.println(get_idle_val());
 }

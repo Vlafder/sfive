@@ -44,14 +44,16 @@ void initPhysics()
 
 int get_height()
 {
-  return sensor.readRangeSingleMillimeters() - 14;
+  return max(0, sensor.readRangeSingleMillimeters() - 14);
 }
 
 
 
-void set_height(unsigned int height)
+void set_height(int height)
 {
-  analogWrite(IN1, (int)(84.28 + 11.04*height - 0.59*height*height + 0.01*height*height*height));
+  int h = height+14;
+  int level = (int)(115 + 11.04*h - 0.59*h*h + 0.01*h*h*h);
+  analogWrite(IN1, level);
 }
 
 
