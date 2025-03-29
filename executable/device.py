@@ -105,7 +105,7 @@ class Device():
 
     def get(self):
         if not self.sp:
-            return [round(time.time())%100, 15, 18, 0, 50]
+            return []
 
         try:
             self.sp.write(msg(f"{GET}"))

@@ -200,6 +200,18 @@ class UI(QMainWindow):
 				print(pencil["color"])
 				self.pens.append( self.plots[index].plot(name=f'{pencil["name"]}', pen=mkPen(color=pencil["color"], width=pencil["width"])) )
 
+		etc = self.device.info["plot_tepmlates"]["etc"]
+		print(etc)
+		self.ui_elements["k1_slider"].setMinimum(etc["k1"]["min"])
+		self.ui_elements["k1_slider"].setMaximum(etc["k1"]["max"])
+		self.ui_elements["k1_slider"].setSingleStep(etc["k1"]["step"])
+		self.ui_elements["k1_slider"].setValue(etc["k1"]["default"])
+		self.ui_elements["k1_slider"].setMinimum(etc["k2"]["min"])
+		self.ui_elements["k1_slider"].setMaximum(etc["k2"]["max"])
+		self.ui_elements["k1_slider"].setSingleStep(etc["k2"]["step"])
+		self.ui_elements["k1_slider"].setValue(etc["k2"]["default"])
+		
+
 	def detectDevice(self):
 		self.exchange = False
 
@@ -230,8 +242,9 @@ class UI(QMainWindow):
 
 	#start data exchange
 	def start(self):
-		self.exchange = True
-		self.device.start()
+		if ("Ошибка" not in self.device.info["status"]):
+			self.exchange = True
+			self.device.start()
 
 	#stop data exchange
 	def stop(self):
@@ -286,8 +299,8 @@ class UI(QMainWindow):
 		amp = self.ui_elements["amplitude"].text()
 		ori = self.ui_elements["origin"].text()
 		sig = self.ui_elements["signal"].checkedButton().objectName()
-		self.k1 = self.ui_elements["k1_lbl"].text()
-		self.k2 = self.ui_elements["k2_lbl"].text()
+		k1 = self.ui_elements["k1_lbl"].text()
+		k2 = self.ui_elements["k2_lbl"].text()
 
 		locale = {
 			"triangular" : "Треугольная",
