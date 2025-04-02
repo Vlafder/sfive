@@ -193,15 +193,13 @@ class UI(QMainWindow):
 			self.plots[index].setMouseEnabled(x=True, y=False)
 
 			self.plots[index].setYRange(plot["lower_limit"], plot["upper_limit"])
-			self.plots[index].setLabel("left", plot["left_lable"])
+			self.plots[index].setLabel("left", plot["left_label"])
 			self.plots[index].setLabel("bottom", plot["bottom_label"])
 
 			for pencil in plot["graphs"].values():
-				print(pencil["color"])
 				self.pens.append( self.plots[index].plot(name=f'{pencil["name"]}', pen=mkPen(color=pencil["color"], width=pencil["width"])) )
 
 		etc = self.device.info["plot_tepmlates"]["etc"]
-		print(etc)
 		self.ui_elements["k1_slider"].setMinimum(etc["k1"]["min"])
 		self.ui_elements["k1_slider"].setMaximum(etc["k1"]["max"])
 		self.ui_elements["k1_slider"].setSingleStep(etc["k1"]["step"])
@@ -348,12 +346,11 @@ class UI(QMainWindow):
 				return
 
 			self.data[0].append(raw_data[0])
-			index = 1
+			index = 0
 			for plot in self.device.info["plot_tepmlates"]["plots"].values():
 				for j in plot["graphs"].keys():
-					self.data[index].append(raw_data[index])
-					#print(self.data[index])
-					self.pens[index-1].setData( self.data[0], self.data[index])
+					self.data[index+1].append(raw_data[index+1])
+					self.pens[index].setData( self.data[0], self.data[index+1])
 					index += 1
 
 			

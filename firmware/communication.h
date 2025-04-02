@@ -2,8 +2,7 @@
 
 //User defined callbacks
 void parse_params(String);
-int get_idle_val();
-float get_real_val();
+String get_val();
 String get_model_info(void);
 
 //Commands
@@ -75,7 +74,7 @@ void handle_request()
 				data_time = 0;
 				break;
 			case GET:
-				answer = String(data_time) + "|" + String(get_idle_val()) + "|" + String(get_real_val());
+				answer = String(data_time) + "|" + get_val();
     		Serial.println(answer);
 				break;
       case INFO:

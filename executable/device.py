@@ -65,8 +65,7 @@ class Device():
         self.info["author"] = result[4]
 
         gui_requirements = json.loads(result[5])
-        self.info["plot_tepmlates"] = gui_requirements["plot_tepmlates"]
-        print(self.info["plot_tepmlates"])
+        self.info["plot_tepmlates"] = gui_requirements
 
 
     def getModelInfo(self):
@@ -77,8 +76,11 @@ class Device():
         if not self.sp:
             return 
 
-        #turn [3, 1, 2] -> "3|1|2"
-        params = '|'.join(args)
+        #get signal number by name
+        signal = args[0]
+
+        #turn [3, 1, 2] -> "003001002"
+        params = '|'.join([to_len_3(param) for param in args[1:]])
 
         self.sp.write(msg(f"{SET}{signal}{params}"))
 
@@ -116,7 +118,7 @@ class Device():
         
         raw_data = self.sp.readline().decode().strip()
         
-        result = raw_data.split(" ")
+        result = raw_data.split("|")
 
         if(len(result)):
             return [round(float(i)) for i in result]
@@ -126,3 +128,13 @@ class Device():
 
 def msg(text):
     return bytes(text + "\n", 'utf-8')
+
+def to_len_3(param):
+    result = ["0", "0", "0"]
+
+    for i in range(3):
+        result[i] = str(param % 10);
+        param //= 10
+
+    #reverse a string
+    return ''.join(result[::-1])
